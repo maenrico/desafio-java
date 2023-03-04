@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: meu-banco-de-dados
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: minha-senha-secreta
+      MYSQL_USER: meu-usuario
+      MYSQL_PASSWORD: minha-senha
+      MYSQL_DATABASE: minha-aplicacao
+    ports:
+      - "3306:3306"
+
+  minha-aplicacao:
+    build: .
+    container_name: minha-aplicacao
+    restart: always
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/minha-aplicacao?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: meu-usuario
+      SPRING_DATASOURCE_PASSWORD: minha-senha
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
